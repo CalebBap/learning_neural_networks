@@ -1,14 +1,17 @@
-import os
-#import torch
+#####################################################################################################
+##   Note: this code is based on the following tutorial:                                          ##
+##    - Author: adventuresinML                                                                     ##
+##    - URL: adventuresinmachinelearning.com/convolutional-neural-networks-tutorial-in-pytorch     ##
+##    - Title: Convolutional Neural Networks Tutorial in PyTorch                                   ##
+#####################################################################################################
 
+import os
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
 import torchvision.datasets
 import numpy as np
-
-
 
 # Set hyperparameters
 numEpochs = 5       # Number of times complete dataset is passed forward and backward through NN
@@ -33,3 +36,17 @@ testingDataset = torchvision.datasets.MNIST(root = MNIST_PATH, train = False, tr
 # Load the datasets created above into data loader to create DataLoader objects
 trainingLoader = DataLoader(dataset = trainingDataset, batch_size = batchSize, shuffle = True)
 testingLoader = DataLoader(dataset = testingDataset, batch_size = batchSize, shuffle = False)
+
+# Create a class for NN model that inheirits from nn.Module
+class DigitClassifierNN(nn.Module):
+    def __init__(self):
+        super(DigitClassifierNN, self).__init__()
+        self.layer1 = nn.Sequential(nn.Conv2d(1, 32, kernel_size = 5, stride = 1, padding = 2), 
+                                    nn.ReLU(), 
+                                    nn.MaxPool2d(kernel_size = 2, stride = 2))
+        self.layer2 = nn.Sequential(nn.Conv2d(32, 64, kernel_size = 5, stride = 1, padding = 2),
+                                    nn.ReLU,
+                                    nn.MaxPool2d(kernel_size = 2, stride = 2))
+        self.dropOut = nn.Dropout()
+        self.fullyConnected1 = nn.Linear(7 * 7 * 64, 1000)
+        self.fullyConnected2 = nn.Linear(1000, 10)
