@@ -37,16 +37,18 @@ testingDataset = torchvision.datasets.MNIST(root = MNIST_PATH, train = False, tr
 trainingLoader = DataLoader(dataset = trainingDataset, batch_size = batchSize, shuffle = True)
 testingLoader = DataLoader(dataset = testingDataset, batch_size = batchSize, shuffle = False)
 
-# Create a class for NN model that inheirits from nn.Module
+# Class for NN model that inheirits from nn.Module
 class DigitClassifierNN(nn.Module):
     def __init__(self):
         super(DigitClassifierNN, self).__init__()
-        self.layer1 = nn.Sequential(nn.Conv2d(1, 32, kernel_size = 5, stride = 1, padding = 2), 
+
+        # Create layer objects
+        self.layer1 = nn.Sequential(nn.Conv2d(1, 32, kernel_size = 5, stride = 1, padding = 2), # Convolutional filter with 1 input channel, 32 output channels and a filter size of 5 x 5  
                                     nn.ReLU(), 
-                                    nn.MaxPool2d(kernel_size = 2, stride = 2))
+                                    nn.MaxPool2d(kernel_size = 2, stride = 2))  # Size of window is 2 x 2, default padding = 0
         self.layer2 = nn.Sequential(nn.Conv2d(32, 64, kernel_size = 5, stride = 1, padding = 2),
                                     nn.ReLU,
                                     nn.MaxPool2d(kernel_size = 2, stride = 2))
-        self.dropOut = nn.Dropout()
-        self.fullyConnected1 = nn.Linear(7 * 7 * 64, 1000)
+        self.dropOut = nn.Dropout()     # Create drop-out layer to avoid over-fitting
+        self.fullyConnected1 = nn.Linear(7 * 7 * 64, 1000)      # First argument = no. of nodes in the layer, second argument = no. of nodes in the next layer
         self.fullyConnected2 = nn.Linear(1000, 10)
