@@ -47,22 +47,22 @@ class DigitClassifierNN(nn.Module):
                                     nn.ReLU(), 
                                     nn.MaxPool2d(kernel_size = 2, stride = 2))  # Size of window is 2 x 2, default padding = 0
         self.layer2 = nn.Sequential(nn.Conv2d(32, 64, kernel_size = 5, stride = 1, padding = 2),
-                                    nn.ReLU,
+                                    nn.ReLU(),
                                     nn.MaxPool2d(kernel_size = 2, stride = 2))
         self.dropOut = nn.Dropout()     # Create drop-out layer to avoid over-fitting
         self.fullyConnected1 = nn.Linear(7 * 7 * 64, 1000)      # First argument = no. of nodes in the layer, second argument = no. of nodes in the next layer
         self.fullyConnected2 = nn.Linear(1000, 10)
 
-# Define how data flows through NN when performing a forward pass
-# Overrides default forward function in nn.Module 
-def forward(self, data):       # data = a batch of data
-    dataOut = self.layer1(data)
-    dataOut = self.layer2(dataOut)
-    dataOut = dataOut.reshape(dataOut.size(0), -1)      # Flatten data dimensions from 7 x 7 x 64 to 3164 x 7
-    dataOut = self.dropOut(dataOut)
-    dataOut = self.fullyConnected1(dataOut)
-    dataOut = self.fullyConnected2(dataOut)
-    return dataOut
+    # Define how data flows through NN when performing a forward pass
+    # Overrides default forward function in nn.Module 
+    def forward(self, data):       # data = a batch of data
+        dataOut = self.layer1(data)
+        dataOut = self.layer2(dataOut)
+        dataOut = dataOut.reshape(dataOut.size(0), -1)      # Flatten data dimensions from 7 x 7 x 64 to 3164 x 7
+        dataOut = self.dropOut(dataOut)
+        dataOut = self.fullyConnected1(dataOut)
+        dataOut = self.fullyConnected2(dataOut)
+        return dataOut
 
 # Create instance of CNN
 model = DigitClassifierNN()
