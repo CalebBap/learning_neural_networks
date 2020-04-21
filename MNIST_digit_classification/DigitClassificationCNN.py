@@ -52,3 +52,24 @@ class DigitClassifierNN(nn.Module):
         self.dropOut = nn.Dropout()     # Create drop-out layer to avoid over-fitting
         self.fullyConnected1 = nn.Linear(7 * 7 * 64, 1000)      # First argument = no. of nodes in the layer, second argument = no. of nodes in the next layer
         self.fullyConnected2 = nn.Linear(1000, 10)
+
+# Define how data flows through NN when performing a forward pass
+# Overrides default forward function in nn.Module 
+def forward(self, data):       # data = a batch of data
+    dataOut = self.layer1(data)
+    dataOut = self.layer2(dataOut)
+    dataOut = dataOut.reshape(dataOut.size(0), -1)      # Flatten data dimensions from 7 x 7 x 64 to 3164 x 7
+    dataOut = self.dropOut(dataOut)
+    dataOut = self.fullyConnected1(dataOut)
+    dataOut = self.fullyConnected2(dataOut)
+    return dataOut
+
+# Create instance of CNN
+model = DigitClassifierNN()
+
+criterion = nn.CrossEntropyLoss()       # Loss operation
+                                        # CrossEntropyLoss() combines SoftMax activation and a cross entropy loss function 
+                                        # (i.e. generates probability for each class and then measures NN's performance)
+
+# Define Adam optimiser to adjust NN's trainable parameters during training
+optimiser = torch.optim.Adam(model.parameters(), lr = learningRate)     # nn.Module class provides parameters() to automatically track all trainable paramters in model
