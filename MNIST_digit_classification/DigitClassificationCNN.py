@@ -73,3 +73,34 @@ criterion = nn.CrossEntropyLoss()       # Loss operation
 
 # Define Adam optimiser to adjust NN's trainable parameters during training
 optimiser = torch.optim.Adam(model.parameters(), lr = learningRate)     # nn.Module class provides parameters() to automatically track all trainable paramters in model
+
+# Define how model will be trained
+totalSteps = len(trainingLoader)
+losses = []
+accuracy = []
+
+for epoch in range(numEpochs):
+    for i, (images, labels) in enumerate(trainingLoader):
+        
+        # Perform a forward pass
+        outputs = model(images)     # No need to call model.forward(images) because nn.Module does so automatically
+        loss = criterion(outputs, labels)
+        losses.append(loss.item())
+
+        # Perform backpropagation and Adam optimisation
+        optimiser.zero_grad()       # Zero gradients
+        loss.backward()             # Perform backpropagation to calculate gradients
+        optimiser.step()            # Perform Adam optimisation
+
+        # Track accuracy: for each sample find the class NN has predicted (i.e. the node with the highest value out of the 10 nodes/classes of the output)
+        total = labels.size(0)      # Get batch size                               
+
+        _, predicted = torch.max(outputs.data, 1)       # max() returns the max value in a tensor
+                                                        # Call max() on model's output and define on which axis to return the index of the max value 
+                                                        # Axis 1 is the output node axis (Axis 0 corresponds to the batch size dimension)
+                                                        # Value returned corresponds to the class that the NN has most strongly predicted
+        
+        correct = (predicted == labels).sum().item()    # Sum up all the correct predictions (i.e. those in which the predicted class matches the label)
+                                                        # Output of sum() is a tensor hence item() call to get the value corresponding to the number of correct predictions
+        
+        accuracy.append(correct / total)             
