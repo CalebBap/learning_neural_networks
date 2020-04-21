@@ -103,4 +103,26 @@ for epoch in range(numEpochs):
         correct = (predicted == labels).sum().item()    # Sum up all the correct predictions (i.e. those in which the predicted class matches the label)
                                                         # Output of sum() is a tensor hence item() call to get the value corresponding to the number of correct predictions
         
-        accuracy.append(correct / total)             
+        accuracy.append(correct / total)    
+
+        if(i == 99):
+            print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
+                  .format(epoch + 1, numEpochs, i + 1, totalSteps, loss.item(), (correct / total) * 100))     
+
+# Test model
+model.eval()    # Set model to evaluation mode (disables drop-out and batch normalisation layers)
+with torch.no_grad():   # Disable autograd functionality (i.e. calculation and backpropagation of error gradients) in model 
+                        # with no_grad() to speed up computation while testing the model
+    correct = 0
+    total = 0
+    for images, labels in testingLoader:
+        outputs = model(images)
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+    
+    testAccuracy = (correct / total) * 100
+    print("Accuracy of model for 10,000 test images: " + str(testAccuracy))
+
+# Save trained model and plot 
+torch.save(model.state_dict(), MODEL_PATH + "digitClassificationCNN.ckpt")
