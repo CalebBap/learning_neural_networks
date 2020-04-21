@@ -122,7 +122,7 @@ with torch.no_grad():   # Disable autograd functionality (i.e. calculation and b
         correct += (predicted == labels).sum().item()
     
     testAccuracy = (correct / total) * 100
-    print("Accuracy of model for 10,000 test images: " + str(testAccuracy))
+    print("Accuracy of model for 10,000 test images: " + str(testAccuracy) + "%")
 
 # Save trained model and plot 
 torch.save(model.state_dict(), MODEL_PATH + "digitClassificationCNN.ckpt")
